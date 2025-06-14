@@ -1,8 +1,8 @@
 # `vscode-typst-implied-multiplication`
 
-Recently, I've been evaluating Typst as an alternative to LaTeX. In general, the experience has been quite positive! However, one thing I miss from LaTeX is implied multiplication: in LaTeX, one can write `abc` for the product of three variables `a`, `b`, `c`. In Typst, on the other hand, one must write `a b c` instead, since `abc` could refer to the variable `abc`.
+Recently, I've been evaluating Typst as an alternative to LaTeX. In general, the experience has been quite positive! However, one thing I miss from LaTeX is implied multiplication: in LaTeX, one can write `abc` for the product of three variables `a`, `b`, `c`. In Typst, on the other hand, one must write `a b c` instead, since `abc` could refer to the variable `abc`; the spaces are required to disambiguate.
 
-While this design decision is defensible, my muscle memory is too used to implied multiplication, so I often find myself adding in spaces after the fact. So:
+While this design decision is defensible, my muscle memory is too used to implied multiplication, and I often find myself adding in spaces after the fact. Hence:
 
 **This VS Code extension contributes a command that automatically fixes implied multiplication errors in the lines surrounding the cursor in Typst files. For instance, it will replace `A_(ij)`with`A_(i j)`, assuming that there is no variable named `ij` defined.**
 
