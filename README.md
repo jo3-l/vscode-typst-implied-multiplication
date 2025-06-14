@@ -16,6 +16,10 @@ This extension has not been released to the VS Code Marketplace, and probably ne
 
 The [Tinymist](https://github.com/Myriad-Dreamin/tinymist) extension for Typst must also be installed, as this extension relies on diagnostics from Tinymist to detect implied multiplication errors.
 
+## Limitations
+
+- Only fixes one error at a time, since Tinymist seems to only display the first error in any given file. It might be possible to fix this with a much more sophisticated integration with the Typst compiler.
+
 ## License
 
 MIT
