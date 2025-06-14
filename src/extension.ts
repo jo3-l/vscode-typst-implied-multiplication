@@ -1,6 +1,6 @@
 import * as vscode from 'vscode';
 
-const SURROUNDING_RADIUS = 2;
+const SURROUNDING_LINE_RADIUS = 2;
 
 export function activate(context: vscode.ExtensionContext) {
 	const disposable = vscode.commands.registerCommand('typst-implied-multiplication.fixSurrounding', () => {
@@ -12,7 +12,7 @@ export function activate(context: vscode.ExtensionContext) {
 		const impliedMultiplicationErrors = diagnostics
 			.filter(
 				(diag) =>
-					Math.abs(diag.range.start.line - line) <= SURROUNDING_RADIUS &&
+					Math.abs(diag.range.start.line - line) <= SURROUNDING_LINE_RADIUS &&
 					diag.severity === vscode.DiagnosticSeverity.Error
 			)
 			.filter((err) => isImpliedMultiplicationError(err.message));
