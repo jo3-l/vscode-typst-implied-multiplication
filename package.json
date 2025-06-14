@@ -22,13 +22,13 @@
 	"contributes": {
 		"commands": [
 			{
-				"command": "typst-helpers.fixSurroundingImpliedMul",
+				"command": "typst-implied-multiplication.fixSurrounding",
 				"title": "Fix Typst implied multiplication errors on surrounding lines"
 			}
 		],
 		"keybindings": [
 			{
-				"command": "typst-helpers.fixSurroundingImpliedMul",
+				"command": "typst-implied-multiplication.fixSurrounding",
 				"key": "Ctrl+M Ctrl+M",
 				"when": "editorTextFocus && resourceLangId == typst"
 			}

@@ -3,7 +3,7 @@ import * as vscode from 'vscode';
 const SURROUNDING_RADIUS = 2;
 
 export function activate(context: vscode.ExtensionContext) {
-	const disposable = vscode.commands.registerCommand('typst-helpers.fixSurroundingImpliedMul', () => {
+	const disposable = vscode.commands.registerCommand('typst-implied-multiplication.fixSurrounding', () => {
 		const editor = vscode.window.activeTextEditor;
 		if (!editor) return;
 
