@@ -1,0 +1,49 @@
+{
+	"name": "typst-implied-multiplication",
+	"displayName": "Fix Typst Implied Multiplication",
+	"description": "Provides a command to automatically fix implied multiplication errors in Typst files",
+	"version": "0.0.1",
+	"author": "Joseph Liu",
+	"publisher": "jo3-l",
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/jo3-l/vscode-typst-implied-multiplication"
+	},
+	"engines": {
+		"vscode": "^1.74.0"
+	},
+	"categories": [
+		"Other"
+	],
+	"activationEvents": [
+		"onLanguage:typst"
+	],
+	"main": "./out/extension.js",
+	"contributes": {
+		"commands": [
+			{
+				"command": "typst-helpers.fixSurroundingImpliedMul",
+				"title": "Fix Typst implied multiplication errors on surrounding lines"
+			}
+		],
+		"keybindings": [
+			{
+				"command": "typst-helpers.fixSurroundingImpliedMul",
+				"key": "Ctrl+M Ctrl+M",
+				"when": "editorTextFocus && resourceLangId == typst"
+			}
+		]
+	},
+	"scripts": {
+		"vscode:prepublish": "pnpm run compile",
+		"compile": "tsc -p ./",
+		"watch": "tsc -watch -p ./"
+	},
+	"devDependencies": {
+		"@types/node": "16.x",
+		"@types/vscode": "^1.74.0",
+		"@vscode/vsce": "^3.5.0",
+		"typescript": "^4.9.4"
+	},
+	"packageManager": "pnpm@9.15.4+sha512.b2dc20e2fc72b3e18848459b37359a32064663e5627a51e4c74b2c29dd8e8e0491483c3abb40789cfd578bf362fb6ba8261b05f0387d76792ed6e23ea3b1b6a0"
+}
