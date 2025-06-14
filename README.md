@@ -6,7 +6,7 @@ While this design decision is defensible, my muscle memory is too used to implie
 
 **This VS Code extension contributes a command that automatically fixes implied multiplication errors in the lines surrounding the cursor in Typst files. For instance, it will replace `A_(ij)`with`A_(i j)`, assuming that there is no variable named `ij` defined.**
 
-The command is bound to the shortcut <kbd>Ctrl</kbd>+<kbd>M</kbd> <kbd>Ctrl</kbd>+<kbd>M</kbd> by default.
+The command is bound to the shortcut <kbd>Ctrl</kbd>+<kbd>M</kbd> <kbd>Ctrl</kbd>+<kbd>M</kbd> and also runs automatically on save by default.
 
 Will this extension actually save any time? Will I end up using it? Time will tell...
 

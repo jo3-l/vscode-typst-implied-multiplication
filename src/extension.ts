@@ -1,9 +1,10 @@
 import * as vscode from 'vscode';
 
 const SURROUNDING_LINE_RADIUS = 2;
+const COMMAND_ID = 'typst-implied-multiplication.fixSurrounding';
 
 export function activate(context: vscode.ExtensionContext) {
-	const disposable = vscode.commands.registerCommand('typst-implied-multiplication.fixSurrounding', () => {
+	const cmdDisposable = vscode.commands.registerCommand(COMMAND_ID, () => {
 		const editor = vscode.window.activeTextEditor;
 		if (!editor) return;
 
@@ -28,7 +29,13 @@ export function activate(context: vscode.ExtensionContext) {
 		vscode.workspace.applyEdit(edit);
 	});
 
-	context.subscriptions.push(disposable);
+	const onSaveDisposable = vscode.workspace.onDidSaveTextDocument((doc) => {
+		if (doc.languageId !== 'typst') return;
+		vscode.commands.executeCommand(COMMAND_ID);
+	});
+
+	context.subscriptions.push(cmdDisposable);
+	context.subscriptions.push(onSaveDisposable);
 }
 
 function isImpliedMultiplicationError(message: string) {
