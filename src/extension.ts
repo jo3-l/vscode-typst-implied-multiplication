@@ -1,43 +1,82 @@
-import * as vscode from 'vscode';
+import * as vscode from "vscode";
 
 const SURROUNDING_LINE_RADIUS = 2;
-const COMMAND_ID = 'typst-implied-multiplication.fixSurrounding';
 
 export function activate(context: vscode.ExtensionContext) {
-	const cmdDisposable = vscode.commands.registerCommand(COMMAND_ID, () => {
-		const editor = vscode.window.activeTextEditor;
-		if (!editor) return;
+	const cmdDisposable = vscode.commands.registerCommand(
+		"typst-implied-multiplication.fixSurrounding",
+		() => {
+			const editor = vscode.window.activeTextEditor;
+			if (!editor) return;
 
-		const line = editor.selection.active.line;
-		const diagnostics = vscode.languages.getDiagnostics(editor.document.uri);
-		const impliedMultiplicationErrors = diagnostics
-			.filter(
-				(diag) =>
-					Math.abs(diag.range.start.line - line) <= SURROUNDING_LINE_RADIUS &&
-					diag.severity === vscode.DiagnosticSeverity.Error
-			)
-			.filter((err) => isImpliedMultiplicationError(err.message));
+			const errors = findErrors(editor);
+			const edit = new vscode.WorkspaceEdit();
+			for (const error of errors) {
+				const fix = generateFix(editor.document, error.range);
+				edit.replace(editor.document.uri, fix.range, fix.newText);
+			}
+			vscode.workspace.applyEdit(edit);
+			vscode.workspace.save(editor.document.uri);
+		},
+	);
 
-		if (impliedMultiplicationErrors.length === 0) return;
+	const onWillSaveDisposable = vscode.workspace.onWillSaveTextDocument(
+		(event) => {
+			const doc = event.document;
+			if (doc.languageId !== "typst") return;
 
-		const edit = new vscode.WorkspaceEdit();
-		for (const error of impliedMultiplicationErrors) {
-			const originalText = editor.document.getText(error.range);
-			const fixedText = [...originalText].join(' ');
-			edit.replace(editor.document.uri, error.range, fixedText);
-		}
-		vscode.workspace.applyEdit(edit);
-	});
+			const editor = vscode.window.activeTextEditor;
+			if (!editor) return;
 
-	const onSaveDisposable = vscode.workspace.onDidSaveTextDocument((doc) => {
-		if (doc.languageId !== 'typst') return;
-		vscode.commands.executeCommand(COMMAND_ID);
-	});
+			const errors = findErrors(editor);
+			const edits = errors.map((error) =>
+				generateFix(editor.document, error.range),
+			);
+			event.waitUntil(Promise.resolve(edits));
+		},
+	);
 
 	context.subscriptions.push(cmdDisposable);
-	context.subscriptions.push(onSaveDisposable);
+	context.subscriptions.push(onWillSaveDisposable);
+}
+
+function findErrors(editor: vscode.TextEditor): vscode.Diagnostic[] {
+	const line = editor.selection.active.line;
+	const diagnostics = vscode.languages.getDiagnostics(editor.document.uri);
+	const impliedMultiplicationErrors = diagnostics
+		.filter(
+			(diag) =>
+				Math.abs(diag.range.start.line - line) <= SURROUNDING_LINE_RADIUS &&
+				diag.severity === vscode.DiagnosticSeverity.Error,
+		)
+		.filter((err) => isImpliedMultiplicationError(err.message));
+
+	return impliedMultiplicationErrors;
 }
 
 function isImpliedMultiplicationError(message: string) {
-	return message.includes('unknown variable') && message.includes('try adding spaces between each letter');
+	return (
+		message.includes("unknown variable") &&
+		message.includes("try adding spaces between each letter")
+	);
+}
+
+function generateFix(
+	doc: vscode.TextDocument,
+	range: vscode.Range,
+): vscode.TextEdit {
+	const originalText = doc.getText(range);
+	const fixedText = [...originalText].join(" ");
+
+	// If we're dealing with a subscript or superscript, additionally parenthesize the fixed text.
+	if (range.start.character > 0) {
+		const prevChar = doc.getText(
+			new vscode.Range(range.start.translate(0, -1), range.start),
+		);
+		if (prevChar === "_" || prevChar === "^") {
+			return new vscode.TextEdit(range, `(${fixedText})`);
+		}
+	}
+
+	return new vscode.TextEdit(range, fixedText);
 }
